@@ -1,16 +1,20 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 27
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
     }
     lintOptions {
+        checkReleaseBuilds false
         abortOnError false
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
     buildTypes {
         release {
@@ -24,14 +28,14 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
 }
 
-publish {
-    userOrg = 'juicy'
-    groupId = 'com.zx.resource'
-    artifactId = 'fileprovider'
-    publishVersion = '1.0.0'
-    desc = 'Oh hi, this is a nice description for a project, right?'
-    website = 'https://github.com/novoda/bintray-release'
-}
+//kotlin {
+//    experimental {
+//        coroutines 'enable'
+//    }
+//}
+
 repositories {
     mavenCentral()
 }
+
+apply from : rootDir.absolutePath + "/bintrayUpload.gradle"

@@ -12,34 +12,38 @@ import java.io.File
  * <p>包名         com.zx.fileprovider</p>
  * <p>描述         Android 7.0 FileProvider </p>
  */
-fun getUriForFile(context: Context, file: File): Uri {
-    return if (Build.VERSION.SDK_INT >= 24) getUriForFile24(context, file)
-    else Uri.fromFile(file)
-}
-
-private fun getUriForFile24(context: Context, file: File): Uri = android.support.v4.content.FileProvider.getUriForFile(context,
-        context.packageName + ".fileprovider", file)
-
-fun Intent.setData(context: Context, file: File, writeAble: Boolean) {
-    if (Build.VERSION.SDK_INT >= 24) {
-        data = getUriForFile(context, file)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        if (writeAble) {
-            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+class FileProvider {
+    companion object {
+        fun getUriForFile(context: Context, file: File): Uri {
+            return if (Build.VERSION.SDK_INT >= 24) getUriForFile24(context, file)
+            else Uri.fromFile(file)
         }
-    } else {
-        data = Uri.fromFile(file)
-    }
-}
 
-fun Intent.setDataAndType(context: Context, file: File, type: String, writeAble: Boolean) {
-    if (Build.VERSION.SDK_INT >= 24) {
-        setDataAndType(getUriForFile(context, file), type)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        if (writeAble) {
-            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        private fun getUriForFile24(context: Context, file: File): Uri = android.support.v4.content.FileProvider.getUriForFile(context,
+                context.packageName + ".fileprovider", file)
+
+        fun setIntentData(context: Context, intent: Intent, file: File, writeAble: Boolean) {
+            if (Build.VERSION.SDK_INT >= 24) {
+                intent.data = getUriForFile(context, file)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                if (writeAble) {
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                }
+            } else {
+                intent.data = Uri.fromFile(file)
+            }
         }
-    } else {
-        setDataAndType(Uri.fromFile(file), type)
+
+        fun setIntentDataAndType(context: Context, intent: Intent, file: File, type: String, writeAble: Boolean) {
+            if (Build.VERSION.SDK_INT >= 24) {
+                intent.setDataAndType(getUriForFile(context, file), type)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                if (writeAble) {
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                }
+            } else {
+                intent.setDataAndType(Uri.fromFile(file), type)
+            }
+        }
     }
 }
